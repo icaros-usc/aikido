@@ -1,0 +1,28 @@
+var classaikido_1_1trajectory_1_1Spline =
+[
+    [ "PolynomialSegment", "d9/dbf/structaikido_1_1trajectory_1_1Spline_1_1PolynomialSegment.html", "d9/dbf/structaikido_1_1trajectory_1_1Spline_1_1PolynomialSegment" ],
+    [ "Spline", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ac272f9487fd2e3f3cbdebdcf91425f6e", null ],
+    [ "~Spline", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a416302cb62209a07a49323adc063ef95", null ],
+    [ "addSegment", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a5f8169b7e883d63ef078c5c62b8482e1", null ],
+    [ "addSegment", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a2b18c47dc676e4ad5fa42c4256bdc860", null ],
+    [ "evaluate", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a0f9b5cc24ca171aa743655b86ccc6cc5", null ],
+    [ "evaluateDerivative", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a9b4ab7558a90397ebf8dad78c6f2e848", null ],
+    [ "evaluatePolynomial", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a6235a36a6c396e192fd1b7dd157f6a30", null ],
+    [ "getDuration", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a4693a28449a17760c289e8194721331e", null ],
+    [ "getEndTime", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#acf16befaf3d628f575cd3fe0fae53c25", null ],
+    [ "getNumDerivatives", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a07df1d6567fa29ab7e958c88a9ecb635", null ],
+    [ "getNumSegments", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ad0eda674215ac25874883293dfc4cbfa", null ],
+    [ "getNumWaypoints", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ac36a31a1ebb509a75b7bf085c49123e7", null ],
+    [ "getSegmentCoefficients", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a912f17df6272272ddc1886d8b5bc20cb", null ],
+    [ "getSegmentDuration", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ab5e7579337ada073b1b4afe845e5ad02", null ],
+    [ "getSegmentForTime", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a62fda8df5a427eb2c604a000401b313e", null ],
+    [ "getSegmentStartState", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#aac15d7d8503995806493eff8f4691886", null ],
+    [ "getStartTime", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a10d9ffb6373c2a2b76c57b9a74a4b53b", null ],
+    [ "getStateSpace", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a3bf6ccd39bbc22e81047dd5993fc8493", null ],
+    [ "getWaypoint", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ac7016db9cf7c1e83e9954ce068241332", null ],
+    [ "getWaypointDerivative", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ac24b36b4e1f37d75bd82bfef58b91684", null ],
+    [ "getWaypointTime", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ab4967fac197e6d2e608bbdc20c304299", null ],
+    [ "mSegments", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a9a62756524518742b358443c2dd1ae52", null ],
+    [ "mStartTime", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#ab2857db05f49965e4adee7588edd0075", null ],
+    [ "mStateSpace", "df/d9c/classaikido_1_1trajectory_1_1Spline.html#a80f8f0aff92b6a66059833c20d31dd8b", null ]
+];
