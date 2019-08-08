@@ -38,6 +38,15 @@ public:
       ::dart::dynamics::InverseKinematicsPtr _inverseKinematics,
       int _maxNumTrials);
 
+  InverseKinematicsSampleable(
+      statespace::dart::ConstMetaSkeletonStateSpacePtr _metaSkeletonStateSpace,
+      ::dart::dynamics::MetaSkeletonPtr _metaskeleton,
+      SampleablePtr _poseConstraint,
+      SampleablePtr _seedConstraint,
+      ::dart::dynamics::InverseKinematicsPtr _inverseKinematics,
+      int _maxNumTrials,
+      bool debug);
+
   virtual ~InverseKinematicsSampleable() = default;
 
   // Documentation inherited.
@@ -47,6 +56,7 @@ public:
   std::unique_ptr<SampleGenerator> createSampleGenerator() const override;
 
 private:
+  bool m_debug = false;
   statespace::dart::ConstMetaSkeletonStateSpacePtr mMetaSkeletonStateSpace;
   ::dart::dynamics::MetaSkeletonPtr mMetaSkeleton;
   SampleablePtr mPoseConstraint;
