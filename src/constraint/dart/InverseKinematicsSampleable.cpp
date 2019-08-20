@@ -162,21 +162,9 @@ InverseKinematicsSampleable::InverseKinematicsSampleable(
         "Zero degrees of freedom for InverseKinematics solver.");
   }
 
-  if (debug) {
-    std::cout << "Aikido: This?2" << std::endl;
-  }
-
-  if (debug) {
-    for (const std::size_t dofIndex : mInverseKinematics->getDofs()) {
-      std::cout << dofIndex << std::endl;
-    }
-  }
-
   for (const std::size_t dofIndex : mInverseKinematics->getDofs())
   {
-    std::cout << "Aikido: what?" << std::endl;
     const auto dof = ikSkeleton->getDof(dofIndex);
-    std::cout << "Aikido: what? what?" << std::endl;
     if (mMetaSkeleton->getIndexOf(dof, true) == INVALID_INDEX)
     {
       std::stringstream msg;
@@ -188,41 +176,21 @@ InverseKinematicsSampleable::InverseKinematicsSampleable(
     }
   }
 
-  if (debug) {
-    std::cout << "Aikido: This?1" << std::endl;
-  }
-
   if (!mPoseConstraint)
     throw std::invalid_argument("Pose SampleGenerator is nullptr.");
 
-  if (debug) {
-    std::cout << "Aikido: This?3" << std::endl;
-  }
-
   if (!dynamic_cast<const SE3*>(mPoseConstraint->getStateSpace().get()))
     throw std::invalid_argument("Pose Sampleable does not operate on a SE3.");
-  if (debug) {
-    std::cout << "Aikido: This?4" << std::endl;
-  }
 
   if (!mSeedConstraint)
     throw std::invalid_argument("Seed Sampleable is nullptr.");
-  if (debug) {
-    std::cout << "Aikido: This?5" << std::endl;
-  }
 
   if (mSeedConstraint->getStateSpace() != mMetaSkeletonStateSpace)
     throw std::invalid_argument(
         "Seed SampleGenerator is not for this StateSpace.");
-  if (debug) {
-    std::cout << "Aikido: This?6" << std::endl;
-  }
 
   if (mMaxNumTrials <= 0)
     throw std::invalid_argument("Maximum number of trials must be positive.");
-  if (debug) {
-    std::cout << "Aikido: This?7" << std::endl;
-  }
 }
 
 //==============================================================================

@@ -73,13 +73,12 @@ static const double collisionResolution = 0.1;
 
 //==============================================================================
 trajectory::TrajectoryPtr planToConfiguration(
-    const MetaSkeletonStateSpacePtr& space,
-    const MetaSkeletonPtr& metaSkeleton,
-    const StateSpace::State* goalState,
-    const TestablePtr& collisionTestable,
-    RNG* rng,
-    double timelimit)
-{
+    const MetaSkeletonStateSpacePtr &space,
+    const MetaSkeletonPtr &metaSkeleton,
+    const StateSpace::State *goalState,
+    const TestablePtr &collisionTestable,
+    RNG *rng,
+    double timelimit) {
   DART_UNUSED(timelimit);
 
   using planner::ompl::planOMPL;
@@ -109,9 +108,9 @@ trajectory::TrajectoryPtr planToConfiguration(
     return untimedTrajectory;
 
   auto plannerOMPL = std::
-      make_shared<OMPLConfigurationToConfigurationPlanner<::ompl::geometric::
-                                                              RRTConnect>>(
-          space, rng);
+  make_shared<OMPLConfigurationToConfigurationPlanner<::ompl::geometric::
+                                                      RRTConnect>>(
+      space, rng);
 
   untimedTrajectory = plannerOMPL->plan(problem, &pResult);
 
@@ -120,13 +119,12 @@ trajectory::TrajectoryPtr planToConfiguration(
 
 //==============================================================================
 trajectory::TrajectoryPtr planToConfigurations(
-    const MetaSkeletonStateSpacePtr& space,
-    const MetaSkeletonPtr& metaSkeleton,
-    const std::vector<StateSpace::State*>& goalStates,
-    const TestablePtr& collisionTestable,
-    RNG* rng,
-    double timelimit)
-{
+    const MetaSkeletonStateSpacePtr &space,
+    const MetaSkeletonPtr &metaSkeleton,
+    const std::vector<StateSpace::State *> &goalStates,
+    const TestablePtr &collisionTestable,
+    RNG *rng,
+    double timelimit) {
   using planner::ompl::planOMPL;
   DART_UNUSED(timelimit);
 
@@ -141,8 +139,7 @@ trajectory::TrajectoryPtr planToConfigurations(
   auto planner = std::make_shared<SnapConfigurationToConfigurationPlanner>(
       space, std::make_shared<GeodesicInterpolator>(space));
 
-  for (const auto& goalState : goalStates)
-  {
+  for (const auto &goalState : goalStates) {
     // First test with Snap Planner
     auto problem = ConfigurationToConfiguration(
         space, startState, goalState, collisionTestable);
@@ -153,9 +150,9 @@ trajectory::TrajectoryPtr planToConfigurations(
       return untimedTrajectory;
 
     auto plannerOMPL = std::
-        make_shared<OMPLConfigurationToConfigurationPlanner<::ompl::geometric::
-                                                                RRTConnect>>(
-            space, rng);
+    make_shared<OMPLConfigurationToConfigurationPlanner<::ompl::geometric::
+                                                        RRTConnect>>(
+        space, rng);
 
     untimedTrajectory = plannerOMPL->plan(problem, &pResult);
 
@@ -168,16 +165,15 @@ trajectory::TrajectoryPtr planToConfigurations(
 
 //==============================================================================
 trajectory::TrajectoryPtr planToTSR(
-    const MetaSkeletonStateSpacePtr& space,
-    const MetaSkeletonPtr& metaSkeleton,
-    const BodyNodePtr& bn,
-    const TSRPtr& tsr,
-    const TestablePtr& collisionTestable,
-    RNG* rng,
+    const MetaSkeletonStateSpacePtr &space,
+    const MetaSkeletonPtr &metaSkeleton,
+    const BodyNodePtr &bn,
+    const TSRPtr &tsr,
+    const TestablePtr &collisionTestable,
+    RNG *rng,
     double timelimit,
     std::size_t maxNumTrials,
-    const distance::ConstConfigurationRankerPtr& ranker)
-{
+    const distance::ConstConfigurationRankerPtr &ranker) {
   // Create an IK solver with metaSkeleton dofs.
   auto ik = InverseKinematics::create(bn);
 
@@ -186,8 +182,7 @@ trajectory::TrajectoryPtr planToTSR(
     throw std::invalid_argument("MetaSkeleton has 0 degrees of freedom.");
 
   auto skeleton = metaSkeleton->getDof(0)->getSkeleton();
-  for (size_t i = 1; i < metaSkeleton->getNumDofs(); ++i)
-  {
+  for (size_t i = 1; i < metaSkeleton->getNumDofs(); ++i) {
     if (metaSkeleton->getDof(i)->getSkeleton() != skeleton)
       throw std::invalid_argument("MetaSkeleton has more than 1 skeleton.");
   }
@@ -230,16 +225,14 @@ trajectory::TrajectoryPtr planToTSR(
 
   // Use a ranker
   ConstConfigurationRankerPtr configurationRanker(ranker);
-  if (!ranker)
-  {
+  if (!ranker) {
     auto nominalState = space->createState();
     space->copyState(startState, nominalState);
     configurationRanker = std::make_shared<const NominalConfigurationRanker>(
         space, metaSkeleton, nominalState);
   }
 
-  while (snapSamples < maxSnapSamples && generator->canSample())
-  {
+  while (snapSamples < maxSnapSamples && generator->canSample()) {
     // Sample from TSR
     std::lock_guard<std::mutex> lock(robot->getMutex());
     bool sampled = generator->sample(goalState);
@@ -260,8 +253,7 @@ trajectory::TrajectoryPtr planToTSR(
   configurationRanker->rankConfigurations(configurations);
 
   // Try snap planner first
-  for (std::size_t i = 0; i < configurations.size(); ++i)
-  {
+  for (std::size_t i = 0; i < configurations.size(); ++i) {
     auto problem = ConfigurationToConfiguration(
         space, startState, configurations[i], collisionTestable);
 
@@ -274,8 +266,7 @@ trajectory::TrajectoryPtr planToTSR(
   // Start the timer
   dart::common::Timer timer;
   timer.start();
-  for (std::size_t i = 0; i < configurations.size(); ++i)
-  {
+  for (std::size_t i = 0; i < configurations.size(); ++i) {
     auto problem = ConfigurationToConfiguration(
         space, startState, configurations[i], collisionTestable);
 
@@ -295,15 +286,14 @@ trajectory::TrajectoryPtr planToTSR(
 
 //==============================================================================
 InterpolatedPtr planToTSRwithTrajectoryConstraint(
-    const MetaSkeletonStateSpacePtr& space,
-    const dart::dynamics::MetaSkeletonPtr& metaSkeleton,
-    const dart::dynamics::BodyNodePtr& bodyNode,
-    const TSRPtr& goalTsr,
-    const TSRPtr& constraintTsr,
-    const TestablePtr& collisionTestable,
+    const MetaSkeletonStateSpacePtr &space,
+    const dart::dynamics::MetaSkeletonPtr &metaSkeleton,
+    const dart::dynamics::BodyNodePtr &bodyNode,
+    const TSRPtr &goalTsr,
+    const TSRPtr &constraintTsr,
+    const TestablePtr &collisionTestable,
     double timelimit,
-    const CRRTPlannerParameters& crrtParameters)
-{
+    const CRRTPlannerParameters &crrtParameters) {
   using aikido::constraint::Sampleable;
   using aikido::constraint::dart::InverseKinematicsSampleable;
   using aikido::constraint::CyclicSampleable;
@@ -331,8 +321,7 @@ InterpolatedPtr planToTSRwithTrajectoryConstraint(
     throw std::invalid_argument("MetaSkeleton has 0 degrees of freedom.");
 
   auto skeleton = metaSkeleton->getDof(0)->getSkeleton();
-  for (size_t i = 1; i < metaSkeleton->getNumDofs(); ++i)
-  {
+  for (size_t i = 1; i < metaSkeleton->getNumDofs(); ++i) {
     if (metaSkeleton->getDof(i)->getSkeleton() != skeleton)
       throw std::invalid_argument("MetaSkeleton has more than 1 skeleton.");
   }
@@ -400,18 +389,17 @@ InterpolatedPtr planToTSRwithTrajectoryConstraint(
 
 //==============================================================================
 trajectory::TrajectoryPtr planToEndEffectorOffset(
-    const MetaSkeletonStateSpacePtr& space,
-    const dart::dynamics::MetaSkeletonPtr& metaSkeleton,
-    const dart::dynamics::BodyNodePtr& bodyNode,
-    const Eigen::Vector3d& direction,
-    const TestablePtr& collisionTestable,
+    const MetaSkeletonStateSpacePtr &space,
+    const dart::dynamics::MetaSkeletonPtr &metaSkeleton,
+    const dart::dynamics::BodyNodePtr &bodyNode,
+    const Eigen::Vector3d &direction,
+    const TestablePtr &collisionTestable,
     double distance,
     double timelimit,
     double positionTolerance,
     double angularTolerance,
-    const VectorFieldPlannerParameters& vfParameters,
-    const CRRTPlannerParameters& crrtParameters)
-{
+    const VectorFieldPlannerParameters &vfParameters,
+    const CRRTPlannerParameters &crrtParameters) {
   auto saver = MetaSkeletonStateSaver(metaSkeleton);
   DART_UNUSED(saver);
 
@@ -456,20 +444,18 @@ trajectory::TrajectoryPtr planToEndEffectorOffset(
 
 //==============================================================================
 InterpolatedPtr planToEndEffectorOffsetByCRRT(
-    const MetaSkeletonStateSpacePtr& space,
-    const dart::dynamics::MetaSkeletonPtr& metaSkeleton,
-    const BodyNodePtr& bodyNode,
-    const TestablePtr& collisionTestable,
-    const Eigen::Vector3d& direction,
+    const MetaSkeletonStateSpacePtr &space,
+    const dart::dynamics::MetaSkeletonPtr &metaSkeleton,
+    const BodyNodePtr &bodyNode,
+    const TestablePtr &collisionTestable,
+    const Eigen::Vector3d &direction,
     double distance,
     double timelimit,
     double positionTolerance,
     double angularTolerance,
-    const CRRTPlannerParameters& crrtParameters)
-{
+    const CRRTPlannerParameters &crrtParameters) {
   // if direction vector is a zero vector
-  if (direction.norm() == 0.0)
-  {
+  if (direction.norm() == 0.0) {
     throw std::runtime_error("Direction vector is a zero vector");
   }
 
@@ -477,8 +463,7 @@ InterpolatedPtr planToEndEffectorOffsetByCRRT(
   Eigen::Vector3d directionCopy = direction;
   directionCopy.normalize();
 
-  if (distance < 0.0)
-  {
+  if (distance < 0.0) {
     distance = -distance;
     directionCopy = -directionCopy;
   }
@@ -511,12 +496,10 @@ InterpolatedPtr planToEndEffectorOffsetByCRRT(
 }
 //==============================================================================
 std::unordered_map<std::string, const Eigen::VectorXd>
-parseYAMLToNamedConfigurations(const YAML::Node& node)
-{
+parseYAMLToNamedConfigurations(const YAML::Node &node) {
   std::unordered_map<std::string, const Eigen::VectorXd> namedConfigurations;
 
-  for (const auto& configurationNode : node)
-  {
+  for (const auto &configurationNode : node) {
     auto configurationName = configurationNode.first.as<std::string>();
     auto configuration = configurationNode.second.as<Eigen::VectorXd>();
 
@@ -528,14 +511,13 @@ parseYAMLToNamedConfigurations(const YAML::Node& node)
 
 //==============================================================================
 bool getGoalAndConstraintTSRForEndEffectorOffset(
-    const BodyNodePtr& bodyNode,
-    const Eigen::Vector3d& direction,
+    const BodyNodePtr &bodyNode,
+    const Eigen::Vector3d &direction,
     double distance,
-    const TSRPtr& goal,
-    const TSRPtr& constraint,
+    const TSRPtr &goal,
+    const TSRPtr &constraint,
     double positionTolerance,
-    double angularTolerance)
-{
+    double angularTolerance) {
   if (goal == nullptr || constraint == nullptr)
     return false;
 
@@ -565,10 +547,8 @@ bool getGoalAndConstraintTSRForEndEffectorOffset(
 
 //==============================================================================
 Eigen::Isometry3d getLookAtIsometry(
-    const Eigen::Vector3d& positionFrom, const Eigen::Vector3d& positionTo)
-{
-  if (positionTo.norm() < 1e-6)
-  {
+    const Eigen::Vector3d &positionFrom, const Eigen::Vector3d &positionTo) {
+  if (positionTo.norm() < 1e-6) {
     throw std::runtime_error("positionTo cannot be a zero vector.");
   }
   Eigen::Isometry3d H = Eigen::Isometry3d::Identity();
@@ -577,18 +557,16 @@ Eigen::Isometry3d getLookAtIsometry(
   // original z axis direction
   H.linear()
       = Eigen::Quaterniond::FromTwoVectors(Eigen::Vector3d::UnitZ(), positionTo)
-            .toRotationMatrix();
+      .toRotationMatrix();
   return H;
 }
 
 //==============================================================================
-const dart::dynamics::BodyNode* getBodyNodeOrThrow(
-    const MetaSkeleton& skeleton, const std::string& bodyNodeName)
-{
+const dart::dynamics::BodyNode *getBodyNodeOrThrow(
+    const MetaSkeleton &skeleton, const std::string &bodyNodeName) {
   auto bodyNode = skeleton.getBodyNode(bodyNodeName);
 
-  if (!bodyNode)
-  {
+  if (!bodyNode) {
     std::stringstream message;
     message << "Bodynode [" << bodyNodeName << "] does not exist in skeleton.";
     throw std::runtime_error(message.str());
@@ -598,13 +576,11 @@ const dart::dynamics::BodyNode* getBodyNodeOrThrow(
 }
 
 //==============================================================================
-dart::dynamics::BodyNode* getBodyNodeOrThrow(
-    MetaSkeleton& skeleton, const std::string& bodyNodeName)
-{
+dart::dynamics::BodyNode *getBodyNodeOrThrow(
+    MetaSkeleton &skeleton, const std::string &bodyNodeName) {
   auto bodyNode = skeleton.getBodyNode(bodyNodeName);
 
-  if (!bodyNode)
-  {
+  if (!bodyNode) {
     std::stringstream message;
     message << "Bodynode [" << bodyNodeName << "] does not exist in skeleton.";
     throw std::runtime_error(message.str());
