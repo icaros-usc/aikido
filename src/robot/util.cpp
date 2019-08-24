@@ -112,6 +112,8 @@ trajectory::TrajectoryPtr planToConfiguration(
                                                       RRTConnect>>(
       space, rng);
 
+  planner::ompl::ompl_dynamic_pointer_cast<::ompl::geometric::RRTConnect>(plannerOMPL->getOMPLPlanner())->setRange(0.5);
+
   untimedTrajectory = plannerOMPL->plan(problem, &pResult);
 
   return untimedTrajectory;
