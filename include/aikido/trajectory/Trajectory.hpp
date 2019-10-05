@@ -16,9 +16,8 @@ AIKIDO_DECLARE_POINTERS(Trajectory)
 /// concrete implementation of this class. The interpretation of the time
 /// parameter is also implementation defined: it may represent an actual time
 /// time or some other value (e.g. arc length under a distance metric).
-class Trajectory
-{
-public:
+class Trajectory {
+ public:
   virtual ~Trajectory() = default;
 
   /// Gets the \c StateSpace that this trajectory is defined in.
@@ -57,7 +56,16 @@ public:
   /// \param _t time parameter
   /// \param[out] _state output state of the trajectory at time \c _t
   virtual void evaluate(
-      double _t, statespace::StateSpace::State* _state) const = 0;
+      double _t, statespace::StateSpace::State *_state) const = 0;
+
+  /// Evaluates the state of the trajectory at time \c _t and store the result
+  ///
+  void evaluate(double _t, Eigen::VectorXd &_vector) {
+    auto stateSpace = getStateSpace();
+    auto state = stateSpace->createState();
+    this->evaluate(_t, state);
+    stateSpace->logMap(state, _vector);
+  }
 
   /// Evaluates the derivative of the trajectory at time \c _t. The
   /// \c _tangentVector is defined in the local frame (i.e. "body frame") and
@@ -69,7 +77,7 @@ public:
   /// \param _derivative order of derivative
   /// \param[out] _tangentVector output tangent vector in the local frame
   virtual void evaluateDerivative(
-      double _t, int _derivative, Eigen::VectorXd& _tangentVector) const = 0;
+      double _t, int _derivative, Eigen::VectorXd &_tangentVector) const = 0;
 
   /// Trajectory metadata
   // TODO: Is metadata required anymore? Delete if not.
