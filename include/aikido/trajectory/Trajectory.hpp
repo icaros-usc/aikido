@@ -1,6 +1,8 @@
 #ifndef AIKIDO_TRAJECTORY_TRAJECTORY_HPP_
 #define AIKIDO_TRAJECTORY_TRAJECTORY_HPP_
 
+#include <fstream>
+#include <iostream>
 #include <Eigen/Core>
 #include "aikido/common/pointers.hpp"
 #include <aikido/trajectory/TrajectoryMetadata.hpp>
@@ -65,6 +67,39 @@ class Trajectory {
     auto state = stateSpace->createState();
     this->evaluate(_t, state);
     stateSpace->logMap(state, _vector);
+  }
+
+  /// Save the waypoints on current trajectory
+  /// This function is mainly used for debugging
+  void save() {
+    auto start = this->getStartTime();
+    auto end = this->getEndTime();
+    std::vector<std::vector<double>> traj;
+    auto curr = start;
+    auto delta = 0.03;
+    while (true) {
+      Eigen::VectorXd currPos;
+      this->evaluate(curr, currPos);
+      std::vector<double> vecCurrPos;
+      vecCurrPos.resize(currPos.size());
+      Eigen::VectorXd::Map(&vecCurrPos[0], currPos.size()) = currPos;
+      traj.emplace_back(vecCurrPos);
+      curr += delta;
+      if (curr > end) {
+        break;
+      }
+    }
+    std::cout << "Caching..." << std::endl;
+    std::ofstream cachingFile;
+    cachingFile.open("cached_traj.txt");
+    for (const auto &positions : traj) {
+      for (const auto &position : positions) {
+        cachingFile << position << ' ';
+      }
+      cachingFile << '\n';
+    }
+    cachingFile.close();
+    std::cout << "Caching finished..." << std::endl;
   }
 
   /// Evaluates the derivative of the trajectory at time \c _t. The
