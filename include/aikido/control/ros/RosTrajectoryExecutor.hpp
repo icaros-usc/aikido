@@ -61,6 +61,9 @@ public:
   /// \copydoc TrajectoryExecutor::cancel()
   void cancel() override;
 
+  /// Try calling all callback functions ready in mCallbackQueue
+  void tryCallingback();
+
 private:
   using TrajectoryActionClient
       = actionlib::ActionClient<control_msgs::FollowJointTrajectoryAction>;
@@ -70,6 +73,8 @@ private:
 
   ::ros::NodeHandle mNode;
   ::ros::CallbackQueue mCallbackQueue;
+  ::boost::thread mCallbackThread;
+  bool mEnd = false;
   TrajectoryActionClient mClient;
   TrajectoryActionClient::GoalHandle mGoalHandle;
 

@@ -58,6 +58,7 @@ RosTrajectoryExecutor::RosTrajectoryExecutor(
     const std::chrono::milliseconds& connectionPollingPeriod)
   : mNode{std::move(node)}
   , mCallbackQueue{}
+  , mCallbackThread{&RosTrajectoryExecutor::tryCallingback, this}
   , mClient{mNode, serverName, &mCallbackQueue}
   , mWaypointTimestep{waypointTimestep}
   , mGoalTimeTolerance{goalTimeTolerance}
@@ -79,6 +80,8 @@ RosTrajectoryExecutor::~RosTrajectoryExecutor()
 {
   // Do nothing.
   // TODO: Should we wait for the current trajectory to finish executing?
+  mEnd = true;
+  mCallbackThread.join();
 }
 
 //==============================================================================
@@ -246,6 +249,14 @@ void RosTrajectoryExecutor::cancel()
   {
     dtwarn << "[RosTrajectoryExecutor::cancel] Attempting to "
            << "cancel trajectory, but no trajectory in progress.\n";
+  }
+}
+
+//===============================================================================
+void RosTrajectoryExecutor::tryCallingback()
+{
+  while (!mEnd) {
+    mCallbackQueue.callAvailable(::ros::WallDuration(0.1));
   }
 }
 
