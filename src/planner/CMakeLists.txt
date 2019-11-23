@@ -5,11 +5,9 @@ set(sources
   FirstSupportedMetaPlanner.cpp
   CompositePlanner.cpp
   Planner.cpp
-  PlanningResult.cpp
   Problem.cpp
   RankedMetaPlanner.cpp
   SnapConfigurationToConfigurationPlanner.cpp
-  SnapPlanner.cpp
   SequenceMetaPlanner.cpp
   World.cpp
   WorldStateSaver.cpp

@@ -45,5 +45,17 @@ const std::string& Planner::Result::getMessage() const
   return mMessage;
 }
 
+/// Sets status.
+void Planner::Result::setStatus(const Planner::Result::StatusType& status)
+{
+  mStatus = status;
+}
+
+/// Returns status.
+const Planner::Result::StatusType& Planner::Result::getStatus() const
+{
+  return mStatus;
+}
+
 } // namespace planner
 } // namespace aikido

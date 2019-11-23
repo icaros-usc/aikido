@@ -17,7 +17,6 @@
 #include "aikido/constraint/dart/JointStateSpaceHelpers.hpp"
 #include "aikido/distance/NominalConfigurationRanker.hpp"
 #include "aikido/distance/defaults.hpp"
-#include "aikido/planner/PlanningResult.hpp"
 #include "aikido/planner/SnapConfigurationToConfigurationPlanner.hpp"
 #include "aikido/planner/ompl/CRRTConnect.hpp"
 #include "aikido/planner/ompl/Planner.hpp"

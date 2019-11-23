@@ -2,6 +2,7 @@
 #define AIKIDO_PLANNER_OMPL_DETAIL_OMPLCONFIGURATIONTOCONFIGURATION_IMPL_HPP_
 
 #include <utility>
+#include <ros/ros.h>
 #include "aikido/constraint/TestableIntersection.hpp"
 #include "aikido/constraint/dart/FrameDifferentiable.hpp"
 #include "aikido/constraint/dart/FrameTestable.hpp"
@@ -142,9 +143,11 @@ OMPLConfigurationToConfigurationPlanner<PlannerType>::plan(
 
   // TODO (avk): Introduce other termination conditions for planners (as in
   // OMPL).
-  auto solved = mPlanner->solve(::ompl::base::plannerNonTerminatingCondition());
+  auto plannerStatus = mPlanner->solve(::ompl::base::plannerNonTerminatingCondition());
 
-  if (solved)
+  ROS_INFO_STREAM("OMPLConfigurationToConfigurationPlanner::plan: " << plannerStatus.asString());
+
+  if (plannerStatus)
   {
     auto returnTraj = std::make_shared<trajectory::Interpolated>(
         mStateSpace, sspace->getInterpolator());

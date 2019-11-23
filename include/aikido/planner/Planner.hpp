@@ -58,6 +58,30 @@ protected:
 class Planner::Result
 {
 public:
+  /// The possible values of the status returned by a planner
+  /// corresponding to ompl PlannerStatus
+  enum StatusType
+  {
+    /// Uninitialized status
+        UNKNOWN = 0,
+    /// Invalid start state or no start state specified
+        INVALID_START,
+    /// Invalid goal state
+        INVALID_GOAL,
+    /// The goal is of a type that a planner does not recognize
+        UNRECOGNIZED_GOAL_TYPE,
+    /// The planner failed to find a solution
+        TIMEOUT,
+    /// The planner found an approximate solution or an exact solution
+        SUCCEEED,
+    /// The planner crashed
+        CRASH,
+    /// The planner did not find a solution for some other reason
+        ABORT,
+    /// The number of possible status values
+        TYPE_COUNT
+  };
+
   /// Constructor.
   ///
   /// \param[in] message Planning result message.
@@ -72,9 +96,16 @@ public:
   /// Returns message.
   const std::string& getMessage() const;
 
+  /// Sets status.
+  void setStatus(const StatusType& status);
+
+  /// Returns status.
+  const StatusType& getStatus() const;
+
 protected:
   /// Message.
   std::string mMessage;
+  StatusType mStatus;
 };
 
 } // namespace planner
