@@ -56,7 +56,6 @@ public:
   std::unique_ptr<SampleGenerator> createSampleGenerator() const override;
 
 private:
-  bool m_debug = false;
   statespace::dart::ConstMetaSkeletonStateSpacePtr mMetaSkeletonStateSpace;
   ::dart::dynamics::MetaSkeletonPtr mMetaSkeleton;
   SampleablePtr mPoseConstraint;

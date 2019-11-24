@@ -63,23 +63,13 @@ public:
   enum StatusType
   {
     /// Uninitialized status
-        UNKNOWN = 0,
+    UNKNOWN = 0,
     /// Invalid start state or no start state specified
-        INVALID_START,
+    INVALID_START,
     /// Invalid goal state
-        INVALID_GOAL,
-    /// The goal is of a type that a planner does not recognize
-        UNRECOGNIZED_GOAL_TYPE,
-    /// The planner failed to find a solution
-        TIMEOUT,
+    INVALID_GOAL,
     /// The planner found an approximate solution or an exact solution
-        SUCCEEED,
-    /// The planner crashed
-        CRASH,
-    /// The planner did not find a solution for some other reason
-        ABORT,
-    /// The number of possible status values
-        TYPE_COUNT
+    SUCCEEDED,
   };
 
   /// Constructor.
@@ -105,7 +95,7 @@ public:
 protected:
   /// Message.
   std::string mMessage;
-  StatusType mStatus;
+  StatusType mStatus = StatusType::UNKNOWN;
 };
 
 } // namespace planner

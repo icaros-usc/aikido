@@ -139,7 +139,6 @@ InverseKinematicsSampleable::InverseKinematicsSampleable(
     , mSeedConstraint(std::move(_seedConstraint))
     , mInverseKinematics(std::move(_inverseKinematics))
     , mMaxNumTrials(_maxNumTrials)
-    , m_debug(debug)
 {
   if (!mMetaSkeletonStateSpace)
     throw std::invalid_argument("MetaSkeletonStateSpace is nullptr.");

@@ -143,12 +143,13 @@ OMPLConfigurationToConfigurationPlanner<PlannerType>::plan(
 
   // TODO (avk): Introduce other termination conditions for planners (as in
   // OMPL).
-  auto plannerStatus = mPlanner->solve(::ompl::base::plannerNonTerminatingCondition());
+  auto solved = mPlanner->solve(::ompl::base::plannerNonTerminatingCondition());
 
-  ROS_INFO_STREAM("OMPLConfigurationToConfigurationPlanner::plan: " << plannerStatus.asString());
-
-  if (plannerStatus)
+  if (solved)
   {
+    if (result) {
+      result->setStatus(planner::Planner::Result::StatusType::SUCCEEDED);
+    }
     auto returnTraj = std::make_shared<trajectory::Interpolated>(
         mStateSpace, sspace->getInterpolator());
 
@@ -177,8 +178,16 @@ OMPLConfigurationToConfigurationPlanner<PlannerType>::plan(
     return returnTraj;
   }
 
-  if (result)
+  if (result) {
     result->setMessage("Problem could not be solved.");
+    if (solved == ::ompl::base::PlannerStatus::INVALID_START) {
+      result->setStatus(planner::Planner::Result::StatusType::INVALID_START);
+    } else if (solved == ::ompl::base::PlannerStatus::TIMEOUT || solved == ::ompl::base::PlannerStatus::INVALID_GOAL) {
+      result->setStatus(planner::Planner::Result::StatusType::INVALID_GOAL);
+    } else {
+      result->setStatus(planner::Planner::Result::StatusType::UNKNOWN);
+    }
+  }
   mPlanner->clear();
   return nullptr;
 }
