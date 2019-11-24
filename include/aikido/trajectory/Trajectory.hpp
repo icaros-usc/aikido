@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <Eigen/Core>
+#include <ros/ros.h>
 #include "aikido/common/pointers.hpp"
 #include <aikido/trajectory/TrajectoryMetadata.hpp>
 #include "../statespace/StateSpace.hpp"
@@ -71,7 +72,8 @@ class Trajectory {
 
   /// Save the waypoints on current trajectory
   /// This function is mainly used for debugging
-  void save() {
+  /// \param[in] path The path to the file to write in.
+  void save(const std::string& filePath) {
     auto start = this->getStartTime();
     auto end = this->getEndTime();
     std::vector<std::vector<double>> traj;
@@ -89,9 +91,8 @@ class Trajectory {
         break;
       }
     }
-    std::cout << "Caching..." << std::endl;
     std::ofstream cachingFile;
-    cachingFile.open("cached_traj.txt");
+    cachingFile.open(filePath);
     for (const auto &positions : traj) {
       for (const auto &position : positions) {
         cachingFile << position << ' ';
@@ -99,7 +100,7 @@ class Trajectory {
       cachingFile << '\n';
     }
     cachingFile.close();
-    std::cout << "Caching finished..." << std::endl;
+    ROS_INFO_STREAM("[Trajectory::save]: One trajectory was saved in " << filePath);
   }
 
   /// Evaluates the derivative of the trajectory at time \c _t. The
