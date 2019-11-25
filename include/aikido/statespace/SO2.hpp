@@ -99,6 +99,16 @@ public:
   void expMap(
       const Eigen::VectorXd& tangent, StateSpace::State* out) const override;
 
+  /// Exponential mapping of Lie algebra element to a Lie group element. The
+  /// tangent space is parameterized a rotation angle.
+
+  /// This is a quick hack for fixing smoothing problem. Check wecook @12
+
+  /// \param[in] tangent Element of the tangent space.
+  /// \param[out] out Corresponding element of the Lie group.
+  void expMapUnbounded(
+      const Eigen::VectorXd& tangent, StateSpace::State* out) const;
+
   /// Log mapping of Lie group element to a Lie algebra element. The tangent
   /// space is parameterized as a rotation angle.
   ///
@@ -128,6 +138,13 @@ public:
   ///
   /// \param[in] angle Rotation angle in (-inf, inf).
   void fromAngle(double angle);
+
+  /// Sets state from a rotation angle.
+  ///
+  /// quick hack for solving smoothing rotation problem, see wecook #12
+  ///
+  /// \param[in] angle Rotation angle in (-inf, inf).
+  void fromAngleUnbounded(double angle);
 
   /// Returns state as an Eigen rotation.
   Eigen::Rotation2Dd toRotation() const;

@@ -30,6 +30,13 @@ public:
   /// \param _state state at the waypoint
   void addWaypoint(double _t, const statespace::StateSpace::State* _state);
 
+  /// Insert a waypoint to the trajectory at the given time with a direct copy
+  /// without bounding
+  ///
+  /// \param _t time of the waypoint
+  /// \param _state state at the waypoint
+  void addWaypointUnbounded(double _t, statespace::StateSpace::State* _state);
+
   /// Gets a waypoint.
   ///
   /// \param _index waypoint index
@@ -71,6 +78,31 @@ public:
       double _t,
       int _derivative,
       Eigen::VectorXd& _tangentVector) const override;
+
+  /// Save the waypoints on current trajectory
+  /// This function is mainly used for debugging
+  /// \param[in] path The path to the file to write in.
+  void save(const std::string& filePath) {
+    std::vector<std::vector<double>> traj;
+    Eigen::VectorXd outVec;
+    for (auto waypoint : mWaypoints) {
+      mStateSpace->logMap(waypoint.state, outVec);
+      std::vector<double> vecCurrPos;
+      vecCurrPos.resize(outVec.size());
+      Eigen::VectorXd::Map(&vecCurrPos[0], outVec.size()) = outVec;
+      traj.emplace_back(vecCurrPos);
+    }
+    std::ofstream cachingFile;
+    cachingFile.open(filePath);
+    for (const auto &positions : traj) {
+      for (const auto &position : positions) {
+        cachingFile << position << ' ';
+      }
+      cachingFile << '\n';
+    }
+    cachingFile.close();
+    ROS_INFO_STREAM("[Interpolated::save]: One trajectory was saved in " << filePath);
+  }
 
 private:
   /// Waypoint in the trajectory.

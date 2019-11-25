@@ -1,4 +1,7 @@
 #include <aikido/trajectory/Interpolated.hpp>
+#include <aikido/statespace/dart/JointStateSpace.hpp>
+#include <aikido/statespace/CartesianProduct.hpp>
+#include <aikido/statespace/dart/SO2Joint.hpp>
 
 using aikido::statespace::GeodesicInterpolator;
 
@@ -158,6 +161,30 @@ void Interpolated::addWaypoint(double _t, const State* _state)
   // Maintain a sorted list of waypoints
   auto it = std::lower_bound(mWaypoints.begin(), mWaypoints.end(), _t);
   mWaypoints.insert(it, Waypoint(_t, state));
+}
+
+//==============================================================================
+void Interpolated::addWaypointUnbounded(double _t, State* _state)
+{
+  const auto *_stateSpace = dynamic_cast<const aikido::statespace::CartesianProduct *>(mStateSpace.get());
+  auto newState = _stateSpace->allocateState();
+  const auto n = _stateSpace->getNumSubspaces();
+  Eigen::VectorXd subVec;
+  for (std::size_t i = 0; i < n; ++i) {
+    auto subspace = _stateSpace->getSubspace<aikido::statespace::dart::JointStateSpace>(i);
+    auto _subState = _stateSpace->getSubState<>(static_cast<aikido::statespace::CartesianProduct::State *>(_state), i);
+    auto newSubState = _stateSpace->getSubState<>(static_cast<aikido::statespace::CartesianProduct::State *>(newState), i);
+    subspace->logMap(_subState, subVec);
+    if (dynamic_cast<const aikido::statespace::dart::SO2Joint *>(subspace.get())) {
+      dynamic_cast<const aikido::statespace::dart::SO2Joint *>(subspace.get())->expMapUnbounded(subVec, newSubState);
+    } else {
+      subspace->expMap(subVec, newSubState);
+    }
+  }
+
+  // Maintain a sorted list of waypoints
+  auto it = std::lower_bound(mWaypoints.begin(), mWaypoints.end(), _t);
+  mWaypoints.insert(it, Waypoint(_t, newState));
 }
 
 //==============================================================================

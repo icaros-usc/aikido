@@ -27,6 +27,12 @@ void SO2::State::fromAngle(double angle)
 }
 
 //==============================================================================
+void SO2::State::fromAngleUnbounded(double angle)
+{
+  mAngle = angle;
+}
+
+//==============================================================================
 Eigen::Rotation2Dd SO2::State::toRotation() const
 {
   return Eigen::Rotation2Dd(mAngle);
@@ -160,6 +166,20 @@ void SO2::expMap(const Eigen::VectorXd& tangent, StateSpace::State* out) const
 
   double angle = tangent(0);
   fromAngle(sOut, angle);
+}
+
+void SO2::expMapUnbounded(const Eigen::VectorXd& tangent, StateSpace::State* out) const {
+  auto sOut = static_cast<State*>(out);
+  if (tangent.rows() != 1)
+  {
+    std::stringstream msg;
+    msg << "tangent has incorrect size: expected 1"
+        << ", got " << tangent.rows() << ".\n";
+    throw std::runtime_error(msg.str());
+  }
+
+  double angle = tangent(0);
+  sOut->fromAngleUnbounded(angle);
 }
 
 //==============================================================================
