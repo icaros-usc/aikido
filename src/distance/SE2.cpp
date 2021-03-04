@@ -1,5 +1,6 @@
+#include "aikido/distance/SE2.hpp"
+
 #include <boost/math/constants/constants.hpp>
-#include <aikido/distance/SE2.hpp>
 
 namespace aikido {
 namespace distance {
@@ -13,7 +14,7 @@ SE2::SE2(std::shared_ptr<statespace::SE2> _space)
 }
 
 //=============================================================================
-statespace::StateSpacePtr SE2::getStateSpace() const
+statespace::ConstStateSpacePtr SE2::getStateSpace() const
 {
   return mStateSpace;
 }

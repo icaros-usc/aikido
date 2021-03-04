@@ -1,16 +1,15 @@
-#include <dart/common/StlHelpers.hpp>
-
-#include "../../common/metaprogramming.hpp"
-#include "../../statespace/CartesianProduct.hpp"
-#include "../../statespace/Rn.hpp"
-#include "../../statespace/SE2.hpp"
-#include "../../statespace/SO2.hpp"
-#include "../../statespace/SO3.hpp"
-#include "../CartesianProductWeighted.hpp"
-#include "../RnEuclidean.hpp"
-#include "../SE2Weighted.hpp"
-#include "../SO2Angular.hpp"
-#include "../SO3Angular.hpp"
+#include "aikido/common/memory.hpp"
+#include "aikido/common/metaprogramming.hpp"
+#include "aikido/distance/CartesianProductWeighted.hpp"
+#include "aikido/distance/RnEuclidean.hpp"
+#include "aikido/distance/SE2Weighted.hpp"
+#include "aikido/distance/SO2Angular.hpp"
+#include "aikido/distance/SO3Angular.hpp"
+#include "aikido/statespace/CartesianProduct.hpp"
+#include "aikido/statespace/Rn.hpp"
+#include "aikido/statespace/SE2.hpp"
+#include "aikido/statespace/SO2.hpp"
+#include "aikido/statespace/SO3.hpp"
 
 namespace aikido {
 namespace distance {
@@ -31,7 +30,7 @@ struct createDistanceMetricFor_impl<const statespace::R0>
 {
   static Ptr create(std::shared_ptr<const statespace::R0> _sspace)
   {
-    return ::dart::common::make_unique<R0Euclidean>(std::move(_sspace));
+    return ::aikido::common::make_unique<R0Euclidean>(std::move(_sspace));
   }
 };
 
@@ -41,7 +40,7 @@ struct createDistanceMetricFor_impl<const statespace::R1>
 {
   static Ptr create(std::shared_ptr<const statespace::R1> _sspace)
   {
-    return ::dart::common::make_unique<R1Euclidean>(std::move(_sspace));
+    return ::aikido::common::make_unique<R1Euclidean>(std::move(_sspace));
   }
 };
 
@@ -51,7 +50,7 @@ struct createDistanceMetricFor_impl<const statespace::R2>
 {
   static Ptr create(std::shared_ptr<const statespace::R2> _sspace)
   {
-    return ::dart::common::make_unique<R2Euclidean>(std::move(_sspace));
+    return ::aikido::common::make_unique<R2Euclidean>(std::move(_sspace));
   }
 };
 
@@ -61,7 +60,7 @@ struct createDistanceMetricFor_impl<const statespace::R3>
 {
   static Ptr create(std::shared_ptr<const statespace::R3> _sspace)
   {
-    return ::dart::common::make_unique<R3Euclidean>(std::move(_sspace));
+    return ::aikido::common::make_unique<R3Euclidean>(std::move(_sspace));
   }
 };
 
@@ -71,7 +70,7 @@ struct createDistanceMetricFor_impl<const statespace::R6>
 {
   static Ptr create(std::shared_ptr<const statespace::R6> _sspace)
   {
-    return ::dart::common::make_unique<R6Euclidean>(std::move(_sspace));
+    return ::aikido::common::make_unique<R6Euclidean>(std::move(_sspace));
   }
 };
 
@@ -81,7 +80,7 @@ struct createDistanceMetricFor_impl<const statespace::SO2>
 {
   static Ptr create(std::shared_ptr<const statespace::SO2> _sspace)
   {
-    return ::dart::common::make_unique<SO2Angular>(std::move(_sspace));
+    return ::aikido::common::make_unique<SO2Angular>(std::move(_sspace));
   }
 };
 
@@ -91,7 +90,7 @@ struct createDistanceMetricFor_impl<const statespace::SO3>
 {
   static Ptr create(std::shared_ptr<const statespace::SO3> _sspace)
   {
-    return ::dart::common::make_unique<SO3Angular>(std::move(_sspace));
+    return ::aikido::common::make_unique<SO3Angular>(std::move(_sspace));
   }
 };
 
@@ -115,7 +114,7 @@ struct createDistanceMetricFor_impl<const statespace::CartesianProduct>
       metrics.emplace_back(std::move(metric));
     }
 
-    return ::dart::common::make_unique<CartesianProductWeighted>(
+    return ::aikido::common::make_unique<CartesianProductWeighted>(
         std::move(_sspace), std::move(metrics));
   }
 };
@@ -126,21 +125,21 @@ struct createDistanceMetricFor_impl<const statespace::SE2>
 {
   static Ptr create(std::shared_ptr<const statespace::SE2> _sspace)
   {
-    return ::dart::common::make_unique<SE2Weighted>(std::move(_sspace));
+    return ::aikido::common::make_unique<SE2Weighted>(std::move(_sspace));
   }
 };
 
 //==============================================================================
-using SupportedStateSpaces
-    = common::type_list<const statespace::CartesianProduct,
-                        const statespace::R0,
-                        const statespace::R1,
-                        const statespace::R2,
-                        const statespace::R3,
-                        const statespace::R6,
-                        const statespace::SO2,
-                        const statespace::SO3,
-                        const statespace::SE2>;
+using SupportedStateSpaces = common::type_list<
+    const statespace::CartesianProduct,
+    const statespace::R0,
+    const statespace::R1,
+    const statespace::R2,
+    const statespace::R3,
+    const statespace::R6,
+    const statespace::SO2,
+    const statespace::SO3,
+    const statespace::SE2>;
 
 } // namespace detail
 

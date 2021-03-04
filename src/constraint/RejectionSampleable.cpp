@@ -1,5 +1,6 @@
-#include <dart/common/StlHelpers.hpp>
-#include <aikido/constraint/RejectionSampleable.hpp>
+#include "aikido/constraint/RejectionSampleable.hpp"
+
+#include "aikido/common/memory.hpp"
 
 namespace aikido {
 namespace constraint {
@@ -92,7 +93,7 @@ std::unique_ptr<SampleGenerator> RejectionSampleable::createSampleGenerator()
     const
 {
   auto sampler = mSampleable->createSampleGenerator();
-  return ::dart::common::make_unique<RejectionSampler>(
+  return ::aikido::common::make_unique<RejectionSampler>(
       mStateSpace, std::move(sampler), mTestable, mMaxTrialPerSample);
 }
 

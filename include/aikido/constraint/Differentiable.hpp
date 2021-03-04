@@ -2,9 +2,11 @@
 #define AIKIDO_CONSTRAINT_DIFFERENTIABLE_HPP_
 
 #include <memory>
+
 #include <Eigen/Dense>
+
 #include "aikido/common/pointers.hpp"
-#include "../statespace/StateSpace.hpp"
+#include "aikido/statespace/StateSpace.hpp"
 
 namespace aikido {
 namespace constraint {
@@ -25,6 +27,7 @@ enum class ConstraintType
 class Differentiable
 {
 public:
+  /// Destructor
   virtual ~Differentiable() = default;
 
   /// Gets the StateSpace that this constraint operates on.

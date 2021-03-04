@@ -1,6 +1,8 @@
 #include <boost/make_shared.hpp>
 #include <ompl/base/spaces/SO2StateSpace.h>
+
 #include <aikido/planner/ompl/StateSampler.hpp>
+
 #include "OMPLTestHelpers.hpp"
 
 using aikido::planner::ompl::GeometricStateSpace;
@@ -40,7 +42,7 @@ TEST_F(StateSamplerTest, SampleUniformGeneratorCantSample)
 {
   StateSampler ssampler(
       gSpace.get(),
-      ::dart::common::make_unique<EmptySampleGenerator>(stateSpace));
+      ::aikido::common::make_unique<EmptySampleGenerator>(stateSpace));
   auto s1 = gSpace->allocState()->as<GeometricStateSpace::StateType>();
 
   // Ensure we get two different states if we sample twice
@@ -54,7 +56,7 @@ TEST_F(StateSamplerTest, SampleUniformGeneratorFailsSample)
 {
   StateSampler ssampler(
       gSpace.get(),
-      ::dart::common::make_unique<EmptySampleGenerator>(stateSpace));
+      ::aikido::common::make_unique<EmptySampleGenerator>(stateSpace));
   auto s1 = gSpace->allocState()->as<GeometricStateSpace::StateType>();
 
   // Ensure we get two different states if we sample twice
@@ -72,9 +74,8 @@ TEST_F(StateSamplerTest, SampleUniformValid)
   // Ensure we get two different states if we sample twice
   ssampler.sampleUniform(s1);
   ssampler.sampleUniform(s2);
-  EXPECT_FALSE(
-      getTranslationalState(stateSpace, s1)
-          .isApprox(getTranslationalState(stateSpace, s2)));
+  EXPECT_FALSE(getTranslationalState(stateSpace, s1)
+                   .isApprox(getTranslationalState(stateSpace, s2)));
   gSpace->freeState(s1);
   gSpace->freeState(s2);
 }

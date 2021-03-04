@@ -20,7 +20,7 @@ project(aikido)
 
 # If you change the version, please update the <version> tag in package.xml.
 set(AIKIDO_MAJOR_VERSION "0")
-set(AIKIDO_MINOR_VERSION "3")
+set(AIKIDO_MINOR_VERSION "4")
 set(AIKIDO_PATCH_VERSION "0")
 set(AIKIDO_VERSION "${AIKIDO_MAJOR_VERSION}.${AIKIDO_MINOR_VERSION}.${AIKIDO_PATCH_VERSION}")
 
@@ -36,6 +36,11 @@ set(CONFIG_INSTALL_DIR "${LIBRARY_INSTALL_DIR}/${PROJECT_NAME}/cmake")
 option(CODECOV "Enable codecov support" OFF)
 option(DOWNLOAD_TAGFILES "Download Doxygen tagfiles for dependencies" OFF)
 option(TREAT_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(BUILD_AIKIDOPY "Build aikidopy (the python binding)" OFF)
+
+if(BUILD_AIKIDOPY)
+  set(BUILD_SHARED_LIBS OFF)
+endif()
 
 #==============================================================================
 # codecov Setup
@@ -90,7 +95,7 @@ find_package(DART 6.6.2 REQUIRED
 # Check if DART is built with octomap so that it supports VoxelGridShape
 include(CheckCXXSourceCompiles)
 set(CMAKE_REQUIRED_DEFINITIONS "")
-set(CMAKE_REQUIRED_FLAGS "-std=c++11")
+set(CMAKE_REQUIRED_FLAGS "-std=c++14")
 set(CMAKE_REQUIRED_INCLUDES ${DART_INCLUDE_DIRS})
 set(CMAKE_REQUIRED_LIBRARIES ${DART_LIBRARIES})
 check_cxx_source_compiles(
@@ -133,6 +138,10 @@ FILE(GLOB_RECURSE aikido_headers "include/*.hpp")
 add_custom_target(headers SOURCES ${aikido_headers})
 
 add_subdirectory("src")
+
+if(BUILD_AIKIDOPY)
+  add_subdirectory("python")
+endif()
 
 enable_testing()
 add_subdirectory("tests" EXCLUDE_FROM_ALL)
@@ -252,10 +261,10 @@ endif()
 # Automatic code formatting using clang-format.
 #
 # We only support one specific ClangFormat version because different versions
-# result in different code formatting with the same configuration. ClangFormat
-# 3.8 is chosen since it's the latest version supported by Ubuntu Trusty.
+# result in different code formatting with the same configuration. The current
+# supported version is 6.0.
 
-clang_format_setup(VERSION 3.8)
+clang_format_setup(VERSION 6.0)
 
 if (CLANG_FORMAT_EXECUTABLE)
   clang_format_add_sources(${aikido_headers})

@@ -218,7 +218,7 @@ int ExampleClass::exampleMethod(int a, int b, int* out) const
 
 You can automatically format all AIKIDO code
 using [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) through
-CMake. Make sure `clang-format 3.8` is installed.
+CMake. Make sure `clang-format 6.0` is installed.
 
 #### Using CMake
 
@@ -304,7 +304,7 @@ endif()
 
 # Prefer using LIST functions to SET functions when working with list variables
 list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")   # ALWAYS quote around singleton variables
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++14")
 
 set(MY_INCLUDE_DIR include)  # Use all-caps for variables.
 

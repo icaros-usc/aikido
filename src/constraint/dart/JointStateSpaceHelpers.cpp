@@ -1,5 +1,6 @@
 #include "aikido/constraint/dart/JointStateSpaceHelpers.hpp"
-#include <dart/common/StlHelpers.hpp>
+
+#include "aikido/common/memory.hpp"
 #include "aikido/constraint/CartesianProductProjectable.hpp"
 #include "aikido/constraint/CartesianProductSampleable.hpp"
 #include "aikido/constraint/CartesianProductTestable.hpp"
@@ -15,11 +16,11 @@ namespace dart {
 std::unique_ptr<Differentiable> createDifferentiableBounds(
     std::shared_ptr<const statespace::dart::JointStateSpace> _stateSpace)
 {
-  return common::DynamicCastFactory<detail::createDifferentiableFor_impl,
-                                    common::DynamicCastFactory_shared_ptr,
-                                    const statespace::dart::JointStateSpace,
-                                    detail::JointStateSpaceTypeList>::
-      create(std::move(_stateSpace));
+  return common::DynamicCastFactory<
+      detail::createDifferentiableFor_impl,
+      common::DynamicCastFactory_shared_ptr,
+      const statespace::dart::JointStateSpace,
+      detail::JointStateSpaceTypeList>::create(std::move(_stateSpace));
 }
 
 //==============================================================================
@@ -47,7 +48,7 @@ std::unique_ptr<Differentiable> createDifferentiableBounds(
 
   // TODO: We should std::move constraints here, but we can't because
   // DifferentiableIntersection does not take by value.
-  return ::dart::common::make_unique<DifferentiableIntersection>(
+  return ::aikido::common::make_unique<DifferentiableIntersection>(
       constraints, _metaSkeleton);
 }
 
@@ -55,11 +56,11 @@ std::unique_ptr<Differentiable> createDifferentiableBounds(
 std::unique_ptr<Projectable> createProjectableBounds(
     std::shared_ptr<const statespace::dart::JointStateSpace> _stateSpace)
 {
-  return common::DynamicCastFactory<detail::createProjectableFor_impl,
-                                    common::DynamicCastFactory_shared_ptr,
-                                    const statespace::dart::JointStateSpace,
-                                    detail::JointStateSpaceTypeList>::
-      create(std::move(_stateSpace));
+  return common::DynamicCastFactory<
+      detail::createProjectableFor_impl,
+      common::DynamicCastFactory_shared_ptr,
+      const statespace::dart::JointStateSpace,
+      detail::JointStateSpaceTypeList>::create(std::move(_stateSpace));
 }
 
 //==============================================================================
@@ -79,7 +80,7 @@ std::unique_ptr<Projectable> createProjectableBounds(
     constraints.emplace_back(constraint.release());
   }
 
-  return ::dart::common::make_unique<CartesianProductProjectable>(
+  return ::aikido::common::make_unique<CartesianProductProjectable>(
       std::move(_metaSkeleton), std::move(constraints));
 }
 
@@ -87,11 +88,11 @@ std::unique_ptr<Projectable> createProjectableBounds(
 std::unique_ptr<Testable> createTestableBounds(
     std::shared_ptr<const statespace::dart::JointStateSpace> _stateSpace)
 {
-  return common::DynamicCastFactory<detail::createTestableFor_impl,
-                                    common::DynamicCastFactory_shared_ptr,
-                                    const statespace::dart::JointStateSpace,
-                                    detail::JointStateSpaceTypeList>::
-      create(std::move(_stateSpace));
+  return common::DynamicCastFactory<
+      detail::createTestableFor_impl,
+      common::DynamicCastFactory_shared_ptr,
+      const statespace::dart::JointStateSpace,
+      detail::JointStateSpaceTypeList>::create(std::move(_stateSpace));
 }
 
 //==============================================================================
@@ -111,7 +112,7 @@ std::unique_ptr<Testable> createTestableBounds(
     constraints.emplace_back(constraint.release());
   }
 
-  return ::dart::common::make_unique<CartesianProductTestable>(
+  return ::aikido::common::make_unique<CartesianProductTestable>(
       std::move(_metaSkeleton), std::move(constraints));
 }
 
@@ -120,10 +121,11 @@ std::unique_ptr<Sampleable> createSampleableBounds(
     std::shared_ptr<const statespace::dart::JointStateSpace> _stateSpace,
     std::unique_ptr<common::RNG> _rng)
 {
-  return common::DynamicCastFactory<detail::createSampleableFor_impl,
-                                    common::DynamicCastFactory_shared_ptr,
-                                    const statespace::dart::JointStateSpace,
-                                    detail::JointStateSpaceTypeList>::
+  return common::DynamicCastFactory<
+      detail::createSampleableFor_impl,
+      common::DynamicCastFactory_shared_ptr,
+      const statespace::dart::JointStateSpace,
+      detail::JointStateSpaceTypeList>::
       create(std::move(_stateSpace), std::move(_rng));
 }
 
@@ -149,7 +151,7 @@ std::unique_ptr<Sampleable> createSampleableBounds(
     constraints.emplace_back(constraint.release());
   }
 
-  return ::dart::common::make_unique<CartesianProductSampleable>(
+  return ::aikido::common::make_unique<CartesianProductSampleable>(
       std::move(_metaSkeleton), std::move(constraints));
 }
 

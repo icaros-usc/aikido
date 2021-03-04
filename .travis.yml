@@ -1,6 +1,5 @@
-dist: trusty
-
-sudo: required
+os: linux
+dist: bionic
 
 group: travis_lts
 
@@ -15,74 +14,97 @@ cache:
   directories:
     - /usr/local/Cellar
 
-matrix:
+jobs:
   fast_finish: true
   include:
     - os: linux
-      compiler: gcc
       env:
-        - BUILD_NAME=TRUSTY_RELEASE
-        - REQUIRED_ONLY=--required-only
-        - BUILD_TYPE=Release
-        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON"
-    - os: linux
-      compiler: gcc
-      env:
-        - BUILD_NAME=TRUSTY_FULL_DEBUG
-        - BUILD_TYPE=Debug
-        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DTREAT_WARNINGS_AS_ERRORS=ON"
-    - os: linux
-      compiler: gcc
-      env:
-        - BUILD_NAME=TRUSTY_FULL_RELEASE
-        - BUILD_TYPE=Release
-        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON"
-    - os: linux
-      env:
-        - BUILD_NAME=XENIAL_FULL_RELEASE
-        - DOCKER_FILE="ubuntu-xenial"
-        - BUILD_TYPE=Release
-        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON"
-      services: docker
-    - os: linux
-      env:
-        - BUILD_NAME=BIONIC_FULL_RELEASE
+        - BUILD_NAME=BIONIC_CATKIN_FULL_RELEASE
         - DOCKER_FILE="ubuntu-bionic"
         - BUILD_TYPE=Release
         - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON"
+        - USE_CATKIN=ON
       services: docker
+
+    - os: linux
+      env:
+        - BUILD_NAME=BIONIC_CMAKE_RELEASE
+        - DOCKER_FILE="ubuntu-bionic"
+        - BUILD_TYPE=Release
+        - USE_CATKIN=OFF
+      services: docker
+
+    - os: linux
+      env:
+        - BUILD_NAME=FOCAL_CMAKE_RELEASE
+        - DOCKER_FILE="ubuntu-focal"
+        - BUILD_TYPE=Release
+        - USE_CATKIN=OFF
+      services: docker
+
+    - os: linux
+      env:
+        - BUILD_NAME=BIONIC_CATKIN_FULL_RELEASE_AIKIDOPY
+        - DOCKER_FILE="ubuntu-bionic"
+        - BUILD_TYPE=Release
+        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON -DBUILD_AIKIDOPY=ON"
+        - USE_CATKIN=ON
+        - BUILD_AIKIDOPY=ON
+      services: docker
+
+    - os: linux
+      env:
+        - BUILD_NAME=BIONIC_CMAKE_RELEASE_AIKIDOPY
+        - DOCKER_FILE="ubuntu-bionic"
+        - BUILD_TYPE=Release
+        - USE_CATKIN=OFF
+        - BUILD_AIKIDOPY=ON
+      services: docker
+
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode12
       compiler: clang
       env:
-        - BUILD_NAME=XCODE93_RELEASE
+        - BUILD_NAME=XCODE11_CMAKE_RELEASE
         - BUILD_TYPE=Release
+        - USE_CATKIN=OFF
+
     - os: linux
       compiler: gcc
       env:
         - BUILD_NAME=DOCS
+        - DOCKER_FILE="ubuntu-bionic"
         - BUILD_TYPE=Release
+        - USE_CATKIN=ON
+      services: docker
+
   allow_failures:
     - os: linux
       env:
-        - BUILD_NAME=XENIAL_FULL_RELEASE
-        - DOCKER_FILE="ubuntu-xenial"
-        - BUILD_TYPE=Release
-        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON"
-      services: docker
-    - os: linux
-      env:
-        - BUILD_NAME=BIONIC_FULL_RELEASE
+        - BUILD_NAME=BIONIC_CATKIN_FULL_RELEASE
         - DOCKER_FILE="ubuntu-bionic"
         - BUILD_TYPE=Release
         - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON"
+        - USE_CATKIN=ON
       services: docker
+
+    - os: linux
+      env:
+        - BUILD_NAME=BIONIC_CATKIN_FULL_RELEASE_AIKIDOPY
+        - DOCKER_FILE="ubuntu-bionic"
+        - BUILD_TYPE=Release
+        - CATKIN_CONFIG_OPTIONS="-DCMAKE_BUILD_TYPE=Release -DTREAT_WARNINGS_AS_ERRORS=ON -DBUILD_AIKIDOPY=ON"
+        - USE_CATKIN=ON
+        - BUILD_AIKIDOPY=ON
+      services: docker
+
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode12
       compiler: clang
       env:
-        - BUILD_NAME=XCODE93_RELEASE
+        - BUILD_NAME=XCODE11_CMAKE_RELEASE
         - BUILD_TYPE=Release
+        - USE_CATKIN=OFF
 
 before_install:
   - if [ -n "$DOCKER_FILE" ]; then
@@ -122,11 +144,11 @@ after_failure:
     fi
 
 deploy:
-  github-token: $GITHUB_TOKEN
+  strategy: git
+  token: $GITHUB_TOKEN
   provider: pages
-  skip-cleanup: true
-  local-dir: gh-pages
-  keep-history: false
+  local_dir: gh-pages
+  keep_history: false
   verbose: true
   on:
     branch: master

@@ -1,10 +1,11 @@
 #include <dart/dart.hpp>
 #include <dart/dynamics/dynamics.hpp>
 #include <gtest/gtest.h>
+
 #include <aikido/planner/World.hpp>
 
-using std::shared_ptr;
 using std::make_shared;
+using std::shared_ptr;
 
 class WorldTest : public ::testing::Test
 {
@@ -138,7 +139,7 @@ TEST_F(
   EXPECT_FALSE(otherWorld->getState() == mWorld->getState());
 }
 
-TEST_F(WorldTest, SetStateThrowsErrorsOnWorldsWithDiffrentNumberOfSkeletons)
+TEST_F(WorldTest, SetStateThrowsErrorsOnWorldsWithDifferentNumberOfSkeletons)
 {
   mWorld->addSkeleton(skel1);
   mWorld->addSkeleton(skel2);
@@ -149,7 +150,7 @@ TEST_F(WorldTest, SetStateThrowsErrorsOnWorldsWithDiffrentNumberOfSkeletons)
   EXPECT_THROW(mWorld->setState(state), std::invalid_argument);
 }
 
-TEST_F(WorldTest, SetStateThrowsErrorsOnWorldsWithSkeletonsWithDiffrentNames)
+TEST_F(WorldTest, SetStateThrowsErrorsOnWorldsWithSkeletonsWithDifferentNames)
 {
   mWorld->addSkeleton(skel1);
 
@@ -157,7 +158,10 @@ TEST_F(WorldTest, SetStateThrowsErrorsOnWorldsWithSkeletonsWithDiffrentNames)
   auto state = clonedWorld->getState();
   EXPECT_NO_THROW(mWorld->setState(state));
 
-  clonedWorld->getSkeleton(0)->setName("testSkel");
+  auto skel = clonedWorld->getSkeleton(0);
+  clonedWorld->removeSkeleton(skel);
+  skel->setName("testSkel");
+  clonedWorld->addSkeleton(skel);
   state = clonedWorld->getState();
   EXPECT_THROW(mWorld->setState(state), std::invalid_argument);
 }

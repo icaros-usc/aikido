@@ -1,6 +1,21 @@
 ## Aikido 0 (prerelease)
 
-### 0.3.0 (201X-XX-XX)
+### 0.5.0 (2020-XX-XX)
+
+* Planner
+
+  * Fixed key bugs in CRRTs: [#574](https://github.com/personalrobotics/aikido/pull/574)
+  * Added ConfigurationToConfigurations planner adapter: [#587](https://github.com/personalrobotics/aikido/pull/587)
+  * Cleaned up planning methods in robot/util: [#588](https://github.com/personalrobotics/aikido/pull/588)
+
+### 0.4.0 (2020-08-27)
+
+* Planner
+
+  * Defined post-processor parameter structs in AIKIDO: [#579](https://github.com/personalrobotics/aikido/pull/579)
+  * Deleted old post-processor interface: [#581](https://github.com/personalrobotics/aikido/pull/581)
+
+### 0.3.0 (2020-05-22)
 
 * Common
 
@@ -9,10 +24,14 @@
   * Cleaned up doxygen errors: [#357](https://github.com/personalrobotics/aikido/pull/357)
   * Fixed bug in compiling with Boost 1.58 on Kinetic + Xenial: [#490](https://github.com/personalrobotics/aikido/pull/490)
   * Fixed bug in Interpolated::addWaypoint(): [#483](https://github.com/personalrobotics/aikido/pull/483)
+  * Fixed bug in VanDerCorput sequence generator to handle non-unit span: [#552](https://github.com/personalrobotics/aikido/pull/552)
+  * Updated to C++14 Standard: [#570](https://github.com/personalrobotics/aikido/pull/570)
+
 * Distance
 
   * Added methods to rank configurations based on specified metric: [#423](https://github.com/personalrobotics/aikido/pull/423)
   * Added weights as optional parameter to rankers: [#484](https://github.com/personalrobotics/aikido/pull/484)
+  * Updated constness of return type of SE2::getStateSpace(): [#536](https://github.com/personalrobotics/aikido/pull/536)
 
 * State Space
 
@@ -29,6 +48,7 @@
 * Constraint
 
   * Added SequentialSampleable: [#393](https://github.com/personalrobotics/aikido/pull/393)
+  * Changed deprecated DART call in InverseKinematics: [#524](https://github.com/personalrobotics/aikido/pull/524)
 
 * Control
 
@@ -51,9 +71,12 @@
   * Added trajectory utility functions: [#462](https://github.com/personalrobotics/aikido/pull/462)
   * Fixed toR1JointTrajectory to copy Waypoints with their time information: [#510](https://github.com/personalrobotics/aikido/pull/510)
   * Removed incorrect Spline to Interpolated conversions: [#511](https://github.com/personalrobotics/aikido/pull/511)
+  * Updated findTimeOfClosestStateTrajectory to use StateSpace Distance Metric: [#543](https://github.com/personalrobotics/aikido/pull/543)
+  * Add SO2 handling in spline conversions: [#546](https://github.com/personalrobotics/aikido/pull/546)
 
 * Planner
 
+  * Check that all planning problems only hold ScopedStates: [#569](https://github.com/personalrobotics/aikido/pull/569)
   * Make all DART planners take MetaSkeleton, and add adapter for turning planners into DART planners: [#437](https://github.com/personalrobotics/aikido/pull/437)
   * Added parabolic timing for linear spline [#302](https://github.com/personalrobotics/aikido/pull/302), [#324](https://github.com/personalrobotics/aikido/pull/324)
   * Fixed step sequence iteration in VFP: [#303](https://github.com/personalrobotics/aikido/pull/303)
@@ -67,20 +90,25 @@
   * Added convenience function for converting SO(2) trajectories to R1 trajectories, support for postprocessing SO(2) trajectories: [#496](https://github.com/personalrobotics/aikido/pull/496)
   * Used ConfigurationRanker in TSR planners: [#503](https://github.com/personalrobotics/aikido/pull/503)
   * Returned Interpolated trajectories from VFP: [#513](https://github.com/personalrobotics/aikido/pull/513)
+  * Added support for taking state snapshots with list of skeleton names: [#523](https://github.com/personalrobotics/aikido/pull/523)
 
 * Robot
 
   * Added Robot, Manipulator, Hand interfaces, and ConcreteRobot, ConcreteManipulator classes: [#325](https://github.com/personalrobotics/aikido/pull/325), [#392](https://github.com/personalrobotics/aikido/pull/392)
   * Added Kunz timer to Robot class: [#505](https://github.com/personalrobotics/aikido/pull/505)
+  * Made ConcreteRobot limit functions public: [#556](https://github.com/personalrobotics/aikido/pull/556)
 
 * RViz
 
   * Fixed bug of not joining Viewer threads when stopping auto-update: [#463](https://github.com/personalrobotics/aikido/pull/463)
   * Fixed bug of not passing full file path to RViz when MeshShape is used: [#518](https://github.com/personalrobotics/aikido/pull/518)
+  * Merged WorldInteractiveMarkerViewer into InteractiveMarkerViewer, removing the former: [#520](https://github.com/personalrobotics/aikido/pull/520)
+  * Fixed bug of not removing SkeletonMarkers of skeletons removed from the associated World: [#560](https://github.com/personalrobotics/aikido/pull/560)
 
 * IO
 
   * Added loadSkeletonFromURDF convenience function: [#388](https://github.com/personalrobotics/aikido/pull/388), [#401](https://github.com/personalrobotics/aikido/pull/401)
+  * Added methods for caching and retrieving trajectories: [#541](https://github.com/personalrobotics/aikido/pull/541)
 
 * Build & Testing & ETC
 
@@ -91,6 +119,8 @@
   * Added DART 6.7 support: [#480](https://github.com/personalrobotics/aikido/pull/480)
   * Fixed use of dart::common::make_unique for C++14 enabled compilers: [#481](https://github.com/personalrobotics/aikido/pull/481)
   * Changed to use own build script for GoogleTest: [#485](https://github.com/personalrobotics/aikido/pull/485)
+  * Added aikido::common::make_unique wrapper: [#532](https://github.com/personalrobotics/aikido/pull/532)
+  * Manually generated (minimal) Python bindings: [#499](https://github.com/personalrobotics/aikido/pull/499)
 
 ### 0.2.0 (2018-01-09)
 

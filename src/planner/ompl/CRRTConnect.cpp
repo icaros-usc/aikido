@@ -1,8 +1,10 @@
+#include "aikido/planner/ompl/CRRTConnect.hpp"
+
 #include <ompl/base/goals/GoalSampleableRegion.h>
 #include <ompl/tools/config/SelfConfig.h>
-#include <aikido/planner/ompl/BackwardCompatibility.hpp>
-#include <aikido/planner/ompl/CRRTConnect.hpp>
-#include <aikido/planner/ompl/GeometricStateSpace.hpp>
+
+#include "aikido/planner/ompl/BackwardCompatibility.hpp"
+#include "aikido/planner/ompl/GeometricStateSpace.hpp"
 
 namespace aikido {
 namespace planner {
@@ -42,18 +44,16 @@ void CRRTConnect::setup()
   if (!mGoalTree)
     mGoalTree.reset(new ::ompl::NearestNeighborsGNAT<Motion*>);
 
-  mStartTree->setDistanceFunction(
-      ompl_bind(
-          &CRRTConnect::distanceFunction,
-          this,
-          OMPL_PLACEHOLDER(_1),
-          OMPL_PLACEHOLDER(_2)));
-  mGoalTree->setDistanceFunction(
-      ompl_bind(
-          &CRRTConnect::distanceFunction,
-          this,
-          OMPL_PLACEHOLDER(_1),
-          OMPL_PLACEHOLDER(_2)));
+  mStartTree->setDistanceFunction(ompl_bind(
+      &CRRTConnect::distanceFunction,
+      this,
+      OMPL_PLACEHOLDER(_1),
+      OMPL_PLACEHOLDER(_2)));
+  mGoalTree->setDistanceFunction(ompl_bind(
+      &CRRTConnect::distanceFunction,
+      this,
+      OMPL_PLACEHOLDER(_1),
+      OMPL_PLACEHOLDER(_2)));
 }
 
 //==============================================================================
@@ -87,6 +87,18 @@ void CRRTConnect::clear()
 //==============================================================================
 void CRRTConnect::setConnectionRadius(double radius)
 {
+  if (radius > si_->getStateValidityCheckingResolution())
+  {
+    radius = si_->getStateValidityCheckingResolution();
+
+    ::ompl::msg::log(
+        __FILE__,
+        __LINE__,
+        ::ompl::msg::LOG_WARN,
+        "Passed connection radius was too large. Clamped to: %f \n",
+        radius);
+  }
+
   mConnectionRadius = radius;
 }
 

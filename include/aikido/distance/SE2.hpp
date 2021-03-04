@@ -1,8 +1,8 @@
 #ifndef AIKIDO_DISTANCE_SE2DISTANCEMETRIC_HPP_
 #define AIKIDO_DISTANCE_SE2DISTANCEMETRIC_HPP_
 
-#include "../statespace/SE2.hpp"
-#include "DistanceMetric.hpp"
+#include "aikido/distance/DistanceMetric.hpp"
+#include "aikido/statespace/SE2.hpp"
 
 namespace aikido {
 namespace distance {
@@ -16,7 +16,7 @@ public:
   explicit SE2(std::shared_ptr<statespace::SE2> _space);
 
   // Documentation inherited
-  statespace::StateSpacePtr getStateSpace() const override;
+  statespace::ConstStateSpacePtr getStateSpace() const override;
 
   /// Computes shortest distance between two SE2 states.
 

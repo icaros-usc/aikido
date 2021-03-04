@@ -1,7 +1,8 @@
 #include "aikido/planner/kunzretimer/KunzRetimer.hpp"
-#include <dart/dart.hpp>
+
 #include "aikido/common/Spline.hpp"
 #include "aikido/common/StepSequence.hpp"
+#include "aikido/common/memory.hpp"
 #include "aikido/statespace/dart/MetaSkeletonStateSpace.hpp"
 #include "aikido/trajectory/Interpolated.hpp"
 #include "aikido/trajectory/Spline.hpp"
@@ -10,12 +11,11 @@
 #include "Path.h"
 #include "Trajectory.h"
 
-using dart::common::make_unique;
-using aikido::statespace::dart::MetaSkeletonStateSpace;
 using aikido::statespace::ConstStateSpacePtr;
-using aikido::trajectory::toR1JointTrajectory;
-using aikido::trajectory::ConstSplinePtr;
+using aikido::statespace::dart::MetaSkeletonStateSpace;
 using aikido::trajectory::ConstInterpolatedPtr;
+using aikido::trajectory::ConstSplinePtr;
+using aikido::trajectory::toR1JointTrajectory;
 
 namespace aikido {
 namespace planner {
@@ -52,7 +52,7 @@ std::unique_ptr<Path> convertToKunzPath(
     stateSpace->logMap(tmpState, tmpVec);
     waypoints.push_back(tmpVec);
   }
-  auto path = make_unique<Path>(waypoints, maxDeviation);
+  auto path = ::aikido::common::make_unique<Path>(waypoints, maxDeviation);
   return path;
 }
 
@@ -71,7 +71,7 @@ std::unique_ptr<aikido::trajectory::Spline> convertToSpline(
 
   // create spline
   auto outputTrajectory
-      = ::dart::common::make_unique<aikido::trajectory::Spline>(
+      = ::aikido::common::make_unique<aikido::trajectory::Spline>(
           stateSpace, startTime);
 
   // create a sequence of time steps from start time to end time by time step
@@ -156,6 +156,19 @@ KunzRetimer::KunzRetimer(
   , mAccelerationLimits{accelerationLimits}
   , mMaxDeviation(maxDeviation)
   , mTimeStep(timeStep)
+{
+  // Do nothing
+}
+
+//==============================================================================
+KunzRetimer::KunzRetimer(
+    const Eigen::VectorXd& velocityLimits,
+    const Eigen::VectorXd& accelerationLimits,
+    const Params& params)
+  : mVelocityLimits{velocityLimits}
+  , mAccelerationLimits{accelerationLimits}
+  , mMaxDeviation(params.mMaxDeviation)
+  , mTimeStep(params.mTimeStep)
 {
   // Do nothing
 }

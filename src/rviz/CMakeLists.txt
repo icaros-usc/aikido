@@ -34,7 +34,6 @@ set(sources
   shape_conversions.cpp
   TrajectoryMarker.cpp
   TSRMarker.cpp
-  WorldInteractiveMarkerViewer.cpp
 )
 
 add_library("${PROJECT_NAME}_rviz" SHARED ${sources})
@@ -64,6 +63,9 @@ target_link_libraries("${PROJECT_NAME}_rviz"
 )
 target_compile_options("${PROJECT_NAME}_rviz"
   PUBLIC ${AIKIDO_CXX_STANDARD_FLAGS}
+)
+target_compile_definitions("${PROJECT_NAME}_rviz"
+  PUBLIC AIKIDO_HAS_RVIZ
 )
 
 add_component(${PROJECT_NAME} rviz)

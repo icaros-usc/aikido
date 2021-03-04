@@ -1,9 +1,11 @@
 #include "aikido/trajectory/BSpline.hpp"
 
 #include <sstream>
+
 #include <Eigen/Core>
-#include <dart/common/common.hpp>
+
 #include "aikido/common/StepSequence.hpp"
+#include "aikido/common/memory.hpp"
 
 namespace aikido {
 namespace trajectory {
@@ -23,7 +25,7 @@ void throwIfInvalidIndex(
   }
 }
 
-} // (anonymous) namespace
+} // namespace
 
 //==============================================================================
 BSpline::BSpline(
@@ -167,7 +169,7 @@ BSpline& BSpline::operator=(BSpline&& other)
 //==============================================================================
 std::unique_ptr<Trajectory> BSpline::clone() const
 {
-  return ::dart::common::make_unique<BSpline>(*this);
+  return ::aikido::common::make_unique<BSpline>(*this);
 }
 
 //==============================================================================

@@ -1,8 +1,11 @@
+#include "aikido/planner/ompl/CRRT.hpp"
+
 #include <limits>
+
 #include <ompl/base/goals/GoalSampleableRegion.h>
 #include <ompl/tools/config/SelfConfig.h>
-#include <aikido/planner/ompl/CRRT.hpp>
-#include <aikido/planner/ompl/GeometricStateSpace.hpp>
+
+#include "aikido/planner/ompl/GeometricStateSpace.hpp"
 
 namespace aikido {
 namespace planner {
@@ -21,6 +24,7 @@ CRRT::CRRT(
   , mLastGoalMotion(nullptr)
   , mCons(nullptr)
   , mMaxStepsize(0.1)
+  , mMaxProjectedStepsizeSlackFactor(2.0)
   , mMinStepsize(1e-4)
 {
 
@@ -44,6 +48,12 @@ CRRT::CRRT(
       this,
       &CRRT::setProjectionResolution,
       &CRRT::getProjectionResolution,
+      "0.:1.:10000.");
+  Planner::declareParam<double>(
+      "max_projected_stepsize_slack_factor",
+      this,
+      &CRRT::setMaxProjectedStepsizeSlackFactor,
+      &CRRT::getMaxProjectedStepsizeSlackFactor,
       "0.:1.:10000.");
   Planner::declareParam<double>(
       "min_step",
@@ -150,6 +160,18 @@ double CRRT::getProjectionResolution() const
 }
 
 //==============================================================================
+void CRRT::setMaxProjectedStepsizeSlackFactor(double _slackFactor)
+{
+  mMaxProjectedStepsizeSlackFactor = _slackFactor;
+}
+
+//==============================================================================
+double CRRT::getMaxProjectedStepsizeSlackFactor() const
+{
+  return mMaxProjectedStepsizeSlackFactor;
+}
+
+//==============================================================================
 void CRRT::setMinStateDifference(double _mindist)
 {
   mMinStepsize = _mindist;
@@ -171,12 +193,11 @@ void CRRT::setup()
   if (!mStartTree)
     mStartTree.reset(new ::ompl::NearestNeighborsGNAT<Motion*>);
 
-  mStartTree->setDistanceFunction(
-      ompl_bind(
-          &CRRT::distanceFunction,
-          this,
-          OMPL_PLACEHOLDER(_1),
-          OMPL_PLACEHOLDER(_2)));
+  mStartTree->setDistanceFunction(ompl_bind(
+      &CRRT::distanceFunction,
+      this,
+      OMPL_PLACEHOLDER(_1),
+      OMPL_PLACEHOLDER(_2)));
 }
 
 //==============================================================================
@@ -333,7 +354,8 @@ CRRT::Motion* CRRT::constrainedExtend(
   while (ptc == false)
   {
 
-    if (distToTarget == 0 || distToTarget - prevDistToTarget >= -mMinStepsize)
+    if (si_->equalStates(cmotion->state, gstate)
+        || prevDistToTarget - distToTarget <= mMinStepsize)
     {
       // reached target or not making progress
       break;
@@ -354,6 +376,17 @@ CRRT::Motion* CRRT::constrainedExtend(
         // Can't project back to constraint anymore, return
         break;
       }
+    }
+
+    // NOTE: This check makes sure the resolution of the path on the constraint
+    // manifold and the resolution used for interpolation (*before* projection)
+    // do not differ wildly. In other words, after projection the distance
+    // between the nearest-neighbor and the projected state should lie within a
+    // scalar multiple of `mMaxStepsize`.
+    double manifoldResolution = si_->distance(xstate, cmotion->state);
+    if (manifoldResolution > mMaxProjectedStepsizeSlackFactor * mMaxStepsize)
+    {
+      break;
     }
 
     if (si_->checkMotion(cmotion->state, xstate))
@@ -400,9 +433,8 @@ CRRT::Motion* CRRT::constrainedExtend(
 //==============================================================================
 ::ompl::base::PlannerStatus CRRT::solve(double solveTime)
 {
-  return solve(
-      ::ompl::base::timedPlannerTerminationCondition(
-          solveTime)); //, std::min(solveTime/100., 0.1)));
+  return solve(::ompl::base::timedPlannerTerminationCondition(
+      solveTime)); //, std::min(solveTime/100., 0.1)));
 }
 
 //==============================================================================
@@ -410,6 +442,6 @@ double CRRT::distanceFunction(const Motion* a, const Motion* b) const
 {
   return si_->distance(a->state, b->state);
 }
-}
-}
-}
+} // namespace ompl
+} // namespace planner
+} // namespace aikido

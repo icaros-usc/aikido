@@ -1,9 +1,9 @@
 #include <stdexcept>
-#include <dart/dart.hpp>
-#include "aikido/constraint/uniform/RnConstantSampler.hpp"
 
-#undef dtwarn
-#define dtwarn (::dart::common::colorErr("Warning", __FILE__, __LINE__, 33))
+#include <dart/dart.hpp>
+
+#include "aikido/common/memory.hpp"
+#include "aikido/constraint/uniform/RnConstantSampler.hpp"
 
 namespace aikido {
 namespace constraint {
@@ -92,7 +92,7 @@ bool RnConstantSamplerSampleGenerator<N>::canSample() const
   return true;
 }
 
-} // namespace anonymous
+} // namespace
 
 //==============================================================================
 template <int N>
@@ -124,7 +124,7 @@ template <int N>
 std::unique_ptr<constraint::SampleGenerator>
 RConstantSampler<N>::createSampleGenerator() const
 {
-  return ::dart::common::make_unique<RnConstantSamplerSampleGenerator<N>>(
+  return ::aikido::common::make_unique<RnConstantSamplerSampleGenerator<N>>(
       mSpace, mValue);
 }
 
